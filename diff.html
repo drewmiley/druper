@@ -1,97 +1,50 @@
 <!DOCTYPE html>
 
 <html>
-
 <body>
-
-                <input type='file' name='file1' id='file1'/>
-
-                <input type='file' name='file2' id='file2'/>
-
-                <button onclick='compare()'>Compare</button>
-
+    <input type='file' name='file1' id='file1'/>
+    <input type='file' name='file2' id='file2'/>
+    <button onclick='compare()'>Compare</button>
 </body>
-
 <script>
+    var lines1 = null;
+    var lines2 = null;
 
-                var lines1 = null;
+    document.getElementById('file1').onchange = function() {
+        var file = this.files[0];
 
-                var lines2 = null;
+        var reader = new FileReader();
 
+        reader.onload = function(progressEvent) {
+                        lines1 = this.result.split('\n');
+        }
 
+        reader.readAsText(file);
+    }
 
-                document.getElementById('file1').onchange = function() {
+    document.getElementById('file2').onchange = function() {
+        var file = this.files[0];
 
-                                var file = this.files[0];
+        var reader = new FileReader();
 
+        reader.onload = function(progressEvent) {
+                        lines2 = this.result.split('\n');
+        }
 
+        reader.readAsText(file);
+    }
 
-                                var reader = new FileReader();
+    function compare() {
+        let set1 = new Set(lines1);
+        let set2 = new Set(lines2);
 
+        let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
+        console.log('1 not 2');
+        onenottwo.forEach(d => console.log(d));
 
-
-                                reader.onload = function(progressEvent) {
-
-                                                lines1 = this.result.split('\n');
-
-                                }
-
-
-
-                                reader.readAsText(file);
-
-                }
-
-
-
-                document.getElementById('file2').onchange = function() {
-
-                                var file = this.files[0];
-
-
-
-                                var reader = new FileReader();
-
-
-
-                                reader.onload = function(progressEvent) {
-
-                                                lines2 = this.result.split('\n');
-
-                                }
-
-
-
-                                reader.readAsText(file);
-
-                }
-
-
-
-                function compare() {
-
-                                let set1 = new Set(lines1);
-
-                                let set2 = new Set(lines2);
-
-
-
-                                let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
-
-                                console.log('1 not 2');
-
-                                onenottwo.forEach(d => console.log(d));
-
-
-
-                                let twonotone = new Set([...set2].filter(d => !set1.has(d)));
-
-                                console.log('2 not 1');
-
-                                twonotone.forEach(d => console.log(d));
-
-                }
-
+        let twonotone = new Set([...set2].filter(d => !set1.has(d)));
+        console.log('2 not 1');
+        twonotone.forEach(d => console.log(d));
+    }
 </script>
-
 </html>
