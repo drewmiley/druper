@@ -4,39 +4,31 @@
 <body>
     <input type='file' name='file1' id='file1'/>
     <input type='file' name='file2' id='file2'/>
-    <button onclick='compare()'>Compare</button>
+    <button id='compare'>Compare</button>
 </body>
 <script>
-    var lines1 = null;
-    var lines2 = null;
+    let fileOne;
+    let fileTwo;
 
     document.getElementById('file1').onchange = function() {
-        var file = this.files[0];
-
-        var reader = new FileReader();
-
+        const reader = new FileReader();
         reader.onload = function(progressEvent) {
-                        lines1 = this.result.split('\n');
+            fileOne = this.result.split(/\r\n|\n/);
         }
-
-        reader.readAsText(file);
+        reader.readAsText(this.files[0]);
     }
 
     document.getElementById('file2').onchange = function() {
-        var file = this.files[0];
-
-        var reader = new FileReader();
-
+        const reader = new FileReader();
         reader.onload = function(progressEvent) {
-                        lines2 = this.result.split('\n');
+            fileTwo = this.result.split(/\r\n|\n/);
         }
-
-        reader.readAsText(file);
+        reader.readAsText(this.files[0]);
     }
 
-    function compare() {
-        let set1 = new Set(lines1);
-        let set2 = new Set(lines2);
+    const compare = () => {
+        let set1 = new Set(fileOne);
+        let set2 = new Set(fileTwo);
 
         let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
         console.log('1 not 2');
@@ -46,5 +38,7 @@
         console.log('2 not 1');
         twonotone.forEach(d => console.log(d));
     }
+
+    document.getElementById('compare').onclick = compare;
 </script>
 </html>
