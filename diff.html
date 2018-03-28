@@ -5,9 +5,14 @@
     <input type='file' name='file1' id='file1'/>
     <input type='file' name='file2' id='file2'/>
     <div>
+        INCLUDE (Supersedes OMIT)
+        <input type='number' name='include-from' min='0' id='include-from' />
+        <input type='number' name='include-to' min='0' id='include-to' />
+    </div>
+    <div>
         OMIT
-        <input type='number' name='from' id='omit-from' />
-        <input type='number' name='to' id='omit-to' />
+        <input type='number' name='omit-from' min='0' id='omit-from' />
+        <input type='number' name='omit-to' min='0' id='omit-to' />
     </div>
     <button id='compare'>Compare</button>
     <div id='result' />
@@ -33,10 +38,20 @@
     }
 
     const modifiedRecords = fileStrings => {
-        const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
-        const omitTo = parseInt(document.getElementById('omit-to').value, 10);
-        const omittedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`)
-        return new Set(omittedStrings);
+        const includeFrom = parseInt(document.getElementById('include-from').value, 10);
+        const includeTo = parseInt(document.getElementById('include-to').value, 10);
+        if (includeFrom && includeTo && includeTo > includeFrom) {
+            const includedStrings = fileStrings.map(d => d.substring(includeFrom, includeTo));
+            return new Set(includedStrings);
+        } else {
+            const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
+            const omitTo = parseInt(document.getElementById('omit-to').value, 10);
+            if (omitFrom && omitTo && omitTo > omitFrom) {
+                const omittedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`);
+                return new Set(omittedStrings);
+            }
+        }
+        return new Set(fileStrings);
     }
 
     const compare = () => {
