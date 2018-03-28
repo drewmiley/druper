@@ -38,25 +38,29 @@
     }
 
     const modifiedRecords = fileStrings => {
+        let modifiedStrings;
         const includeFrom = parseInt(document.getElementById('include-from').value, 10);
         const includeTo = parseInt(document.getElementById('include-to').value, 10);
         if (includeFrom && includeTo && includeTo > includeFrom) {
-            const includedStrings = fileStrings.map(d => d.substring(includeFrom, includeTo));
-            return new Set(includedStrings);
+            modifiedStrings = fileStrings.map(d => d.substring(includeFrom, includeTo));
         } else {
             const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
             const omitTo = parseInt(document.getElementById('omit-to').value, 10);
             if (omitFrom && omitTo && omitTo > omitFrom) {
-                const omittedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`);
-                return new Set(omittedStrings);
+                modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`);
             }
         }
-        return new Set(fileStrings);
+        return (modifiedStrings || fileStrings).map(d => {
+            return { key: d, value: d };
+        });
     }
 
     const compare = () => {
         let set1 = modifiedRecords(fileOne);
         let set2 = modifiedRecords(fileTwo);
+
+        set1 = new Set(fileOne);
+        set2 = new Set(fileTwo);
 
         let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
         console.log('1 not 2');
