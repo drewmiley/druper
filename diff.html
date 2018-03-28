@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <body>
+        <h1>DRUPER</h1>
         <input type='file' name='file1' id='file1'/>
         <input type='file' name='file2' id='file2'/>
         <div>
@@ -62,7 +63,18 @@
             const BnotA = getUniqueRecords(b, a).map(d => d.key);
             let diffA = a.filter(d => !AnotB.includes(d.key));
             let diffB = b.filter(d => !BnotA.includes(d.key));
-            return a;
+            let result = [];
+            for (var i = 0; i < diffA.length; i++) {
+                const recordA = diffA[i];
+                const recordB = diffB[i];
+                if (recordA.value !== recordB.value) {
+                    result.push(`Key A: ${ recordA.key }`);
+                    result.push(`A: ${ recordA.value }`);
+                    result.push(`Key B: ${ recordB.key }`);
+                    result.push(`B : ${ recordB.value }`);
+                }
+            }
+            return result;
         }
 
         const getUniqueRecords = (a, b) => {
@@ -87,7 +99,7 @@
             const recordsOne = modifiedRecords(fileOne);
             const recordsTwo = modifiedRecords(fileTwo);
 
-            const diffRecords = getDiffRecords(recordsOne, recordsTwo).map(d => d.key);
+            const diffRecords = getDiffRecords(recordsOne, recordsTwo);
             printToDiv('#diff', 'Diff', diffRecords);
 
             const onenottwo = getUniqueRecords(recordsOne, recordsTwo).map(d => d.key);
@@ -100,7 +112,7 @@
                 Math.max(recordsOne.length, recordsTwo.length);
             const results= [`Records in File One: ${ recordsOne.length }`,
                 `Records in File Two: ${ recordsTwo.length }`,
-                `Diff Records: ${ diffRecords.length }`,
+                `Diff Records: ${ diffRecords.length / 4 }`,
                 `In One Not Two: ${ onenottwo.length }`,
                 `In Two Not One: ${ twonotone.length }`,
                 `Failure Rate: ${ failureRate }`];
