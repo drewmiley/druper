@@ -15,10 +15,10 @@
         <input type='number' name='omit-to' min='0' id='omit-to' />
     </div>
     <button id='compare'>Compare</button>
-    <div id='result' />
-    <div id='diff' />
-    <div id='onenottwo' />
-    <div id='twonotone' />
+    <div id='result'></div>
+    <div id='diff'></div>
+    <div id='onenottwo'></div>
+    <div id='twonotone'></div>
 </body>
 <script>
     let fileOne;
@@ -58,6 +58,12 @@
         });
     }
 
+    const printToDiv = (selector, initialText, records = []) => {
+        const div = document.querySelector(selector);
+        div.innerText = `${ initialText }\n`;
+        records.forEach(d => div.innerText += `${ d }\n`);
+    }
+
     const compare = () => {
         let set1 = modifiedRecords(fileOne);
         let set2 = modifiedRecords(fileTwo);
@@ -65,18 +71,16 @@
         set1 = new Set(fileOne);
         set2 = new Set(fileTwo);
 
-        let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
-        console.log('1 not 2');
-        onenottwo.forEach(d => console.log(d));
+        printToDiv('#diff', 'Diff');
 
-        let twonotone = new Set([...set2].filter(d => !set1.has(d)));
-        console.log('2 not 1');
-        twonotone.forEach(d => console.log(d));
+        const onenottwo = new Set([...set1].filter(d => !set2.has(d)));
+        printToDiv('#onenottwo', 'In One Not Two', onenottwo);
+
+        const twonotone = new Set([...set2].filter(d => !set1.has(d)));
+        printToDiv('#twonotone', 'In Two Not One', twonotone);
 
         const failureRate = Math.max(onenottwo.size, twonotone.size) /
             Math.max(set1.size, set2.size);
-
-        console.log(failureRate);
         let result = document.querySelector('#result');
         result.innerText = `Records in File One: ${ set1.size }
             Records in File Two: ${ set2.size }
