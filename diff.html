@@ -69,17 +69,12 @@
         const getDiffRecords = (a, b) => {
             const AnotB = getUniqueRecords(a, b).map(d => d.key);
             const BnotA = getUniqueRecords(b, a).map(d => d.key);
-            let diffA = a.filter(d => !AnotB.includes(d.key));
-            let diffB = b.filter(d => !BnotA.includes(d.key));
-            let result = [];
-            for (var i = 0; i < diffA.length; i++) {
-                const recordA = diffA[i];
-                const recordB = diffB[i];
-                if (recordA.value !== recordB.value) {
-                    result.push(`Key: ${ recordA.key }\n${ recordA.value }\n${ recordB.value }`);
-                }
-            }
-            return result;
+            const diffA = a.filter(d => !AnotB.includes(d.key));
+            const diffB = b.filter(d => !BnotA.includes(d.key));
+            return diffA.map(recordA => {
+                return { key: recordA.key, aValue: recordA.value, bValue: diffB.find(recordB => recordA.key === recordB.key).value };
+            }).filter(recordObject => recordObject.aValue !== recordObject.bValue )
+                .map(recordObject => `Key: ${ recordObject.key }\n${ recordObject.aValue }\n${ recordObject.bValue }`);
         }
 
         const getUniqueRecords = (a, b) => {
