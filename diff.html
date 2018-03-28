@@ -57,10 +57,11 @@
             });
         }
 
-        const printToDiv = (selector, initialText, records = []) => {
+        const printToDiv = (selector, initialText, records = [], styles = {}) => {
             const div = document.querySelector(selector);
             div.innerText = `${ initialText }\n`;
             records.forEach(d => div.innerText += `${ d }\n`);
+            Object.keys(styles).forEach(key => div.style[key] = styles[key]);
         }
 
         const compare = () => {
@@ -80,20 +81,14 @@
 
             const failureRate = Math.max(onenottwo.size, twonotone.size) /
                 Math.max(set1.size, set2.size);
-            let result = document.querySelector('#result');
-            result.innerText = `Records in File One: ${ set1.size }
-                Records in File Two: ${ set2.size }
-                Diff Records: ${ 0 }
-                In One Not Two: ${ onenottwo.size }
-                In Two Not One: ${ twonotone.size }
-                Failure Rate: ${ failureRate }`;
-            if (failureRate == 0) {
-                result.style.background = 'green';
-            } else if (failureRate > 0 && failureRate <= 0.005) {
-                result.style.background = 'gold';
-            } else {
-                result.style.background = 'red';
-            }
+            const results= [`Records in File One: ${ set1.size }`,
+                `Records in File Two: ${ set2.size }`,
+                `Diff Records: ${ 0 }`,
+                `In One Not Two: ${ onenottwo.size }`,
+                `In Two Not One: ${ twonotone.size }`,
+                `Failure Rate: ${ failureRate }`];
+            const background = failureRate == 0 ? 'green' : (failureRate > 0.005 ? 'red' : 'gold');
+            printToDiv('#result', 'Results', results, {background});
         }
 
         document.getElementById('compare').onclick = compare;
