@@ -57,6 +57,25 @@
             });
         }
 
+        const getDiffRecords = (a, b) => {
+            const AnotB = getUniqueRecords(a, b).map(d => d.key);
+            const BnotA = getUniqueRecords(b, a).map(d => d.key);
+            let diffA = a.filter(d => !AnotB.includes(d.key));
+            let diffB = b.filter(d => !BnotA.includes(d.key));
+            return a;
+        }
+
+        const getUniqueRecords = (a, b) => {
+            let compare = b.map(d => d.key);
+            return a.filter(d => {
+                const index = compare.indexOf(d.key);
+                if (index > -1) {
+                    compare.splice(index, 1);
+                }
+                return index === -1;
+            });
+        }
+
         const printToDiv = (selector, initialText, records = [], styles = {}) => {
             const div = document.querySelector(selector);
             div.innerText = `${ initialText }\n`;
@@ -65,27 +84,25 @@
         }
 
         const compare = () => {
-            let set1 = modifiedRecords(fileOne);
-            let set2 = modifiedRecords(fileTwo);
+            const recordsOne = modifiedRecords(fileOne);
+            const recordsTwo = modifiedRecords(fileTwo);
 
-            set1 = new Set(fileOne);
-            set2 = new Set(fileTwo);
+            const diffRecords = getDiffRecords(recordsOne, recordsTwo).map(d => d.key);
+            printToDiv('#diff', 'Diff', diffRecords);
 
-            printToDiv('#diff', 'Diff');
-
-            const onenottwo = new Set([...set1].filter(d => !set2.has(d)));
+            const onenottwo = getUniqueRecords(recordsOne, recordsTwo).map(d => d.key);
             printToDiv('#onenottwo', 'In One Not Two', onenottwo);
 
-            const twonotone = new Set([...set2].filter(d => !set1.has(d)));
+            const twonotone = getUniqueRecords(recordsTwo, recordsOne).map(d => d.key);
             printToDiv('#twonotone', 'In Two Not One', twonotone);
 
-            const failureRate = Math.max(onenottwo.size, twonotone.size) /
-                Math.max(set1.size, set2.size);
-            const results= [`Records in File One: ${ set1.size }`,
-                `Records in File Two: ${ set2.size }`,
-                `Diff Records: ${ 0 }`,
-                `In One Not Two: ${ onenottwo.size }`,
-                `In Two Not One: ${ twonotone.size }`,
+            const failureRate = Math.max(onenottwo.length, twonotone.length) /
+                Math.max(recordsOne.length, recordsTwo.length);
+            const results= [`Records in File One: ${ recordsOne.length }`,
+                `Records in File Two: ${ recordsTwo.length }`,
+                `Diff Records: ${ diffRecords.length }`,
+                `In One Not Two: ${ onenottwo.length }`,
+                `In Two Not One: ${ twonotone.length }`,
                 `Failure Rate: ${ failureRate }`];
             const background = failureRate == 0 ? 'green' : (failureRate > 0.005 ? 'red' : 'gold');
             printToDiv('#result', 'Results', results, {background});
