@@ -5,6 +5,7 @@
     <input type='file' name='file1' id='file1'/>
     <input type='file' name='file2' id='file2'/>
     <button id='compare'>Compare</button>
+    <div id='result' />
 </body>
 <script>
     let fileOne;
@@ -37,6 +38,25 @@
         let twonotone = new Set([...set2].filter(d => !set1.has(d)));
         console.log('2 not 1');
         twonotone.forEach(d => console.log(d));
+
+        const failureRate = Math.max(onenottwo.size, twonotone.size) /
+            Math.max(set1.size, set2.size);
+
+        console.log(failureRate);
+        let result = document.querySelector('#result');
+        result.innerText = `Records in File One: ${ set1.size }
+            Records in File Two: ${ set2.size }
+            Diff Records: ${ 0 }
+            In One Not Two: ${ onenottwo.size }
+            In Two Not One: ${ twonotone.size }
+            Failure Rate: ${ failureRate }`;
+        if (failureRate == 0) {
+            result.style.background = 'green';
+        } else if (failureRate > 0 && failureRate <= 0.005) {
+            result.style.background = 'gold';
+        } else {
+            result.style.background = 'red';
+        }
     }
 
     document.getElementById('compare').onclick = compare;
