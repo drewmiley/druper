@@ -5,19 +5,19 @@
         <input type='file' name='file1' id='file1'/>
         <input type='file' name='file2' id='file2'/>
         <div>
-            KEY
-            <input type='number' name='key-from' min='0' id='key-from' />
-            <input type='number' name='key-to' min='0' id='key-to' />
+            <h4>KEY</h4>
+            From<input type='number' name='key-from' min='0' id='key-from' />
+            To<input type='number' name='key-to' min='0' id='key-to' />
         </div>
         <div>
-            INCLUDE (Supersedes OMIT)
-            <input type='number' name='include-from' min='0' id='include-from' />
-            <input type='number' name='include-to' min='0' id='include-to' />
+            <h4>INCLUDE (Supersedes OMIT)</h4>
+            From<input type='number' name='include-from' min='0' id='include-from' />
+            To<input type='number' name='include-to' min='0' id='include-to' />
         </div>
         <div>
-            OMIT
-            <input type='number' name='omit-from' min='0' id='omit-from' />
-            <input type='number' name='omit-to' min='0' id='omit-to' />
+            <h4>OMIT</h4>
+            From<input type='number' name='omit-from' min='0' id='omit-from' />
+            To<input type='number' name='omit-to' min='0' id='omit-to' />
         </div>
         <button id='compare'>Compare</button>
         <div id='result'></div>
@@ -76,10 +76,7 @@
                 const recordA = diffA[i];
                 const recordB = diffB[i];
                 if (recordA.value !== recordB.value) {
-                    result.push(`Key A: ${ recordA.key }`);
-                    result.push(`A: ${ recordA.value }`);
-                    result.push(`Key B: ${ recordB.key }`);
-                    result.push(`B : ${ recordB.value }`);
+                    result.push(`Key: ${ recordA.key }\n${ recordA.value }\n${ recordB.value }`);
                 }
             }
             return result;
@@ -98,7 +95,7 @@
 
         const printToDiv = (selector, initialText, records = [], styles = {}) => {
             const div = document.querySelector(selector);
-            div.innerText = `${ initialText }\n`;
+            div.innerText = `\n${ initialText }\n\n`;
             records.forEach(d => div.innerText += `${ d }\n`);
             Object.keys(styles).forEach(key => div.style[key] = styles[key]);
         }
@@ -116,11 +113,11 @@
             const twonotone = getUniqueRecords(recordsTwo, recordsOne).map(d => d.key);
             printToDiv('#twonotone', 'In Two Not One', twonotone);
 
-            const failureRate = (onenottwo.length + twonotone.length + diffRecords.length / 4) /
+            const failureRate = (onenottwo.length + twonotone.length + diffRecords.length) /
                 Math.max(recordsOne.length, recordsTwo.length);
             const results= [`Records in File One: ${ recordsOne.length }`,
                 `Records in File Two: ${ recordsTwo.length }`,
-                `Diff Records: ${ diffRecords.length / 4 }`,
+                `Diff Records: ${ diffRecords.length }`,
                 `In One Not Two: ${ onenottwo.length }`,
                 `In Two Not One: ${ twonotone.length }`,
                 `Failure Rate: ${ failureRate }`];
