@@ -4,6 +4,11 @@
 <body>
     <input type='file' name='file1' id='file1'/>
     <input type='file' name='file2' id='file2'/>
+    <div>
+        OMIT
+        <input type='number' name='from' id='omit-from' />
+        <input type='number' name='to' id='omit-to' />
+    </div>
     <button id='compare'>Compare</button>
     <div id='result' />
 </body>
@@ -27,9 +32,16 @@
         reader.readAsText(this.files[0]);
     }
 
+    const modifiedRecords = fileStrings => {
+        const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
+        const omitTo = parseInt(document.getElementById('omit-to').value, 10);
+        const omittedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`)
+        return new Set(omittedStrings);
+    }
+
     const compare = () => {
-        let set1 = new Set(fileOne);
-        let set2 = new Set(fileTwo);
+        let set1 = modifiedRecords(fileOne);
+        let set2 = modifiedRecords(fileTwo);
 
         let onenottwo = new Set([...set1].filter(d => !set2.has(d)));
         console.log('1 not 2');
