@@ -5,6 +5,11 @@
         <input type='file' name='file1' id='file1'/>
         <input type='file' name='file2' id='file2'/>
         <div>
+            KEY
+            <input type='number' name='key-from' min='0' id='key-from' />
+            <input type='number' name='key-to' min='0' id='key-to' />
+        </div>
+        <div>
             INCLUDE (Supersedes OMIT)
             <input type='number' name='include-from' min='0' id='include-from' />
             <input type='number' name='include-to' min='0' id='include-to' />
@@ -16,9 +21,9 @@
         </div>
         <button id='compare'>Compare</button>
         <div id='result'></div>
-        <div id='diff'></div>
-        <div id='onenottwo'></div>
-        <div id='twonotone'></div>
+        <div id='diff' style='white-space:pre;'></div>
+        <div id='onenottwo' style='white-space:pre;'></div>
+        <div id='twonotone' style='white-space:pre;'></div>
     </body>
     <script>
         let fileOne;
@@ -44,17 +49,20 @@
             let modifiedStrings;
             const includeFrom = parseInt(document.getElementById('include-from').value, 10);
             const includeTo = parseInt(document.getElementById('include-to').value, 10);
-            if (includeFrom && includeTo && includeTo > includeFrom) {
+            if (includeFrom >=0 && includeTo >=0 && includeTo > includeFrom) {
                 modifiedStrings = fileStrings.map(d => d.substring(includeFrom, includeTo));
             } else {
                 const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
                 const omitTo = parseInt(document.getElementById('omit-to').value, 10);
-                if (omitFrom && omitTo && omitTo > omitFrom) {
+                if (omitFrom >=0 && omitTo >=0 && omitTo > omitFrom) {
                     modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`);
                 }
             }
             return (modifiedStrings || fileStrings).map(d => {
-                return { key: d, value: d };
+                const keyFrom = parseInt(document.getElementById('key-from').value, 10);
+                const keyTo = parseInt(document.getElementById('key-to').value, 10);
+                const key = keyFrom >= 0 && keyTo >=0 && keyTo > keyFrom ? d.substring(keyFrom, keyTo): d;
+                return { key, value: d };
             });
         }
 
@@ -108,7 +116,7 @@
             const twonotone = getUniqueRecords(recordsTwo, recordsOne).map(d => d.key);
             printToDiv('#twonotone', 'In Two Not One', twonotone);
 
-            const failureRate = Math.max(onenottwo.length, twonotone.length) /
+            const failureRate = (onenottwo.length + twonotone.length + diffRecords.length / 4) /
                 Math.max(recordsOne.length, recordsTwo.length);
             const results= [`Records in File One: ${ recordsOne.length }`,
                 `Records in File Two: ${ recordsTwo.length }`,
