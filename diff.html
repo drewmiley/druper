@@ -68,6 +68,16 @@
             });
         }
 
+        const getRulerHTML = length => {
+            const digits = Math.floor(Math.log10(length)) + 1;
+            return Array.from(Array(digits).keys()).reverse().map(power => {
+                return Array.from(Array(length).keys()).map(d => d + 1)
+                    .map(d => d % Math.pow(10, power + 1))
+                    .map(d => d % Math.pow(10, power) === 0 ? d / Math.pow(10, power) : ' ')
+                    .join('');
+            });
+        }
+
         const highlightRecord = (value, comparison) => {
             return value.split('').map((d, i) => d === comparison.substring(i, i + 1) || d === ' ' ? d : `<span style='background:#ff6666;'>${ d }</span>`).join('');
         }
@@ -105,8 +115,11 @@
             const recordsOne = modifiedRecords(fileOne);
             const recordsTwo = modifiedRecords(fileTwo);
 
+            const maxLength = Math.max.apply(Math, recordsOne.concat(recordsTwo).map(d => d.value.length));
+            const rulerHTML = getRulerHTML(maxLength);
+
             const diffRecords = getDiffRecords(recordsOne, recordsTwo);
-            printToDiv('#diff', 'Diff', diffRecords);
+            printToDiv('#diff', 'Diff', rulerHTML.concat(diffRecords));
 
             const onenottwo = getUniqueRecords(recordsOne, recordsTwo).map(d => d.key);
             printToDiv('#onenottwo', 'In One Not Two', onenottwo);
