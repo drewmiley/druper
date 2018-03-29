@@ -116,7 +116,7 @@
                 `In One Not Two: ${ onenottwo.length }`,
                 `In Two Not One: ${ twonotone.length }`,
                 `Failure Rate: ${ failureRate }`];
-            const background = failureRate == 0 ? 'green' : (failureRate > 0.005 ? 'red' : 'gold');
+            const background = failureRate == 0 ? '#00e600' : (failureRate > 0.005 ? '#ff6666' : 'gold');
             printToDiv('#result', 'Results', results, {background});
         }
 
