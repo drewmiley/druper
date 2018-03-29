@@ -22,9 +22,9 @@
         </div>
         <button id='compare'>Compare</button>
         <div id='result'></div>
-        <div id='diff' style='white-space:pre;'></div>
-        <div id='onenottwo' style='white-space:pre;'></div>
-        <div id='twonotone' style='white-space:pre;'></div>
+        <pre width='20px'><div id='diff' style='white-space:pre;'></div></pre>
+        <pre width='20px'><div id='onenottwo' style='white-space:pre;'></div></pre>
+        <pre width='20px'><div id='twonotone' style='white-space:pre;'></div></pre>
     </body>
     <script>
         let fileOne;
@@ -68,7 +68,7 @@
         }
 
         const highlightRecord = (value, comparison) => {
-            return value;
+            return value.split('').map((d, i) => d === comparison.substring(i, i + 1) || d === ' ' ? d : `<span style='background:#ff6666;'>${ d }</span>`).join('');
         }
 
         const getDiffRecords = (a, b) => {
