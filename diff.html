@@ -91,8 +91,8 @@
 
         const printToDiv = (selector, initialText, records = [], styles = {}) => {
             const div = document.querySelector(selector);
-            div.innerText = `\n${ initialText }\n\n`;
-            records.forEach(d => div.innerText += `${ d }\n`);
+            div.innerHTML = `<br />${ initialText }<br /><br />`;
+            records.forEach(d => div.innerHTML += `${ d }<br />`);
             Object.keys(styles).forEach(key => div.style[key] = styles[key]);
         }
 
