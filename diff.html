@@ -67,6 +67,10 @@
             });
         }
 
+        const highlightRecord = (value, comparison) => {
+            return value;
+        }
+
         const getDiffRecords = (a, b) => {
             const AnotB = getUniqueRecords(a, b).map(d => d.key);
             const BnotA = getUniqueRecords(b, a).map(d => d.key);
@@ -75,7 +79,7 @@
             return diffA.map(recordA => {
                 return { key: recordA.key, aValue: recordA.value, bValue: diffB.find(recordB => recordA.key === recordB.key).value };
             }).filter(recordObject => recordObject.aValue !== recordObject.bValue )
-                .map(recordObject => `Key: ${ recordObject.key }\n${ recordObject.aValue }\n${ recordObject.bValue }`);
+                .map(recordObject => `Key: ${ recordObject.key }<br />${ highlightRecord(recordObject.aValue, recordObject.bValue) }<br />${ highlightRecord(recordObject.bValue, recordObject.aValue) }`);
         }
 
         const getUniqueRecords = (a, b) => {
