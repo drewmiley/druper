@@ -4,7 +4,6 @@
         <h1>DRUPER</h1>
         FILE ONE<input type='file' name='file1' id='file1'/>
         FILE TWO<input type='file' name='file2' id='file2'/>
-        <h4>NOTE: FROM IS ONE-BASED</h4>
         <div>
             <h4>KEY</h4>
             From<input type='number' name='key-from' min='1' id='key-from' />
@@ -20,7 +19,9 @@
             From<input type='number' name='omit-from' min='1' id='omit-from' />
             Length<input type='number' name='omit-length' min='1' id='omit-length' />
         </div>
-        <button id='compare'>Compare</button>
+        <br/>
+        <button id='compare' style='height: 50px;width: 80px;font-size: inherit;'>Compare</button>
+        <br />
         <div id='result'></div>
         <pre width='20px'><div id='diff' style='white-space:pre;'></div></pre>
         <pre width='20px'><div id='onenottwo' style='white-space:pre;'></div></pre>
@@ -95,8 +96,8 @@
 
         const printToDiv = (selector, initialText, records = [], styles = {}) => {
             const div = document.querySelector(selector);
-            div.innerHTML = `<br />${ initialText }<br /><br />`;
-            records.forEach(d => div.innerHTML += `${ d }<br />`);
+            const recordsHTML = records.reduce((result, d) => result + `${ d }<br />`, '');
+            div.innerHTML = `<br />${ initialText }<br /><br />${ recordsHTML }`;
             Object.keys(styles).forEach(key => div.style[key] = styles[key]);
         }
 
