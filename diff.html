@@ -4,20 +4,21 @@
         <h1>DRUPER</h1>
         FILE ONE<input type='file' name='file1' id='file1'/>
         FILE TWO<input type='file' name='file2' id='file2'/>
+        <h4>NOTE: FROM IS ONE-BASED</h4>
         <div>
             <h4>KEY</h4>
-            From<input type='number' name='key-from' min='0' id='key-from' />
-            To<input type='number' name='key-to' min='0' id='key-to' />
+            From<input type='number' name='key-from' min='1' id='key-from' />
+            Length<input type='number' name='key-length' min='1' id='key-length' />
         </div>
         <div>
             <h4>INCLUDE (Supersedes OMIT)</h4>
-            From<input type='number' name='include-from' min='0' id='include-from' />
-            To<input type='number' name='include-to' min='0' id='include-to' />
+            From<input type='number' name='include-from' min='1' id='include-from' />
+            Length<input type='number' name='include-length' min='1' id='include-length' />
         </div>
         <div>
             <h4>OMIT</h4>
-            From<input type='number' name='omit-from' min='0' id='omit-from' />
-            To<input type='number' name='omit-to' min='0' id='omit-to' />
+            From<input type='number' name='omit-from' min='1' id='omit-from' />
+            Length<input type='number' name='omit-length' min='1' id='omit-length' />
         </div>
         <button id='compare'>Compare</button>
         <div id='result'></div>
@@ -48,20 +49,20 @@
         const modifiedRecords = fileStrings => {
             let modifiedStrings;
             const includeFrom = parseInt(document.getElementById('include-from').value, 10);
-            const includeTo = parseInt(document.getElementById('include-to').value, 10);
-            if (includeFrom >=0 && includeTo >=0 && includeTo > includeFrom) {
-                modifiedStrings = fileStrings.map(d => d.substring(includeFrom, includeTo));
+            const includeLength = parseInt(document.getElementById('include-length').value, 10);
+            if (includeFrom >= 1 && includeLength >= 1) {
+                modifiedStrings = fileStrings.map(d => d.substring(includeFrom - 1, includeFrom + includeLength - 1));
             } else {
                 const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
-                const omitTo = parseInt(document.getElementById('omit-to').value, 10);
-                if (omitFrom >=0 && omitTo >=0 && omitTo > omitFrom) {
-                    modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom)}${ d.substring(omitTo) }`);
+                const omitLength = parseInt(document.getElementById('omit-length').value, 10);
+                if (omitFrom >=1 && omitLength >=1) {
+                    modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom - 1)}${ d.substring(omitFrom + omitLength - 1) }`);
                 }
             }
             return (modifiedStrings || fileStrings).map(d => {
                 const keyFrom = parseInt(document.getElementById('key-from').value, 10);
-                const keyTo = parseInt(document.getElementById('key-to').value, 10);
-                const key = keyFrom >= 0 && keyTo >=0 && keyTo > keyFrom ? d.substring(keyFrom, keyTo): d;
+                const keyLength = parseInt(document.getElementById('key-length').value, 10);
+                const key = keyFrom >= 1 && keyLength >=1 ? d.substring(keyFrom - 1, keyFrom + keyLength - 1): d;
                 return { key, value: d };
             });
         }
