@@ -35,11 +35,15 @@
         let fileOne;
         let fileTwo;
 
+        let extensionOne;
+        let extensionTwo;
+
         document.getElementById('file1').onchange = function() {
             const reader = new FileReader();
             reader.onload = function(progressEvent) {
                 fileOne = this.result.split(/\r\n|\n/);
             }
+            extensionOne = this.files[0].name.split('.')[1];
             reader.readAsText(this.files[0]);
         }
 
@@ -48,10 +52,11 @@
             reader.onload = function(progressEvent) {
                 fileTwo = this.result.split(/\r\n|\n/);
             }
+            extensionTwo = this.files[0].name.split('.')[1]
             reader.readAsText(this.files[0]);
         }
 
-        const modifiedRecords = fileStrings => {
+        const modifiedRecords = (fileStrings, extension) => {
             let modifiedStrings;
             const includeFrom = parseInt(document.getElementById('include-from').value, 10);
             const includeLength = parseInt(document.getElementById('include-length').value, 10);
@@ -65,9 +70,23 @@
                 }
             }
             return (modifiedStrings || fileStrings).map(d => {
-                const keyFrom = parseInt(document.getElementById('key-from').value, 10);
-                const keyLength = parseInt(document.getElementById('key-length').value, 10);
-                const key = keyFrom >= 1 && keyLength >=1 ? d.substring(keyFrom - 1, keyFrom + keyLength - 1): d;
+                let key;
+                if (extension === 'txt') {
+                    const keyFrom = parseInt(document.getElementById('key-from').value, 10);
+                    const keyLength = parseInt(document.getElementById('key-length').value, 10);
+                    const txtKey = keyFrom >= 1 && keyLength >=1 ? d.substring(keyFrom - 1, keyFrom + keyLength - 1) : d;
+                    key = txtKey;
+                }
+                if (extension === 'csv') {
+                    const keyIndex = parseInt(document.getElementById('key-index').value, 10);
+                    const csvKey = keyIndex >= 1 ? d.split(',')[keyIndex - 1] : d;
+                    key = csvKey;
+                }
+                if (extension === 'tsv') {
+                    const keyIndex = parseInt(document.getElementById('key-index').value, 10);
+                    const tsvKey = keyIndex >= 1 ? d.split('\t')[keyIndex - 1] : d;
+                    key = tsvKey;
+                }
                 return { key, value: d };
             });
         }
@@ -116,8 +135,8 @@
         }
 
         const compare = () => {
-            const recordsOne = modifiedRecords(fileOne);
-            const recordsTwo = modifiedRecords(fileTwo);
+            const recordsOne = modifiedRecords(fileOne, extensionOne);
+            const recordsTwo = modifiedRecords(fileTwo, extensionTwo);
 
             const maxLength = Math.max.apply(Math, recordsOne.concat(recordsTwo).map(d => d.value.length));
             const rulerHTML = getRulerHTML(maxLength);
