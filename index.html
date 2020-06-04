@@ -14,14 +14,18 @@
             Index<input type='number' name='key-index' min='1' id='key-index' />
         </div>
         <div>
-            <h4>INCLUDE (Supersedes OMIT)</h4>
+            <h4>INCLUDE (for txt, Supersedes OMIT)</h4>
             From<input type='number' name='include-from' min='1' id='include-from' />
             Length<input type='number' name='include-length' min='1' id='include-length' />
         </div>
         <div>
-            <h4>OMIT</h4>
+            <h4>OMIT (for txt)</h4>
             From<input type='number' name='omit-from' min='1' id='omit-from' />
             Length<input type='number' name='omit-length' min='1' id='omit-length' />
+        </div>
+        <div>
+            <h4>Include (if csv/tsv, start index 1)</h4>
+            <input type='text' name='include-array' id='include-array' />
         </div>
         <br/>
         <button id='compare' style='height: 50px;width: 80px;font-size: inherit;'>Compare</button>
@@ -58,16 +62,26 @@
 
         const modifiedRecords = (fileStrings, extension) => {
             let modifiedStrings;
-            const includeFrom = parseInt(document.getElementById('include-from').value, 10);
-            const includeLength = parseInt(document.getElementById('include-length').value, 10);
-            if (includeFrom >= 1 && includeLength >= 1) {
-                modifiedStrings = fileStrings.map(d => d.substring(includeFrom - 1, includeFrom + includeLength - 1));
-            } else {
-                const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
-                const omitLength = parseInt(document.getElementById('omit-length').value, 10);
-                if (omitFrom >=1 && omitLength >=1) {
-                    modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom - 1)}${ d.substring(omitFrom + omitLength - 1) }`);
+            if (extension === 'txt') {
+                const includeFrom = parseInt(document.getElementById('include-from').value, 10);
+                const includeLength = parseInt(document.getElementById('include-length').value, 10);
+                if (includeFrom >= 1 && includeLength >= 1) {
+                    modifiedStrings = fileStrings.map(d => d.substring(includeFrom - 1, includeFrom + includeLength - 1));
+                } else {
+                    const omitFrom = parseInt(document.getElementById('omit-from').value, 10);
+                    const omitLength = parseInt(document.getElementById('omit-length').value, 10);
+                    if (omitFrom >=1 && omitLength >=1) {
+                        modifiedStrings = fileStrings.map(d => `${ d.substring(0, omitFrom - 1)}${ d.substring(omitFrom + omitLength - 1) }`);
+                    }
                 }
+            }
+            if (extension === 'csv') {
+                const includeArray = document.getElementById('include-array').value.split(',').map(d => parseInt(d, 10));
+                modifiedStrings = fileStrings.map(d => d.split(',').filter((_, i) => includeArray.includes(i)).join(','));
+            }
+            if (extension === 'tsv') {
+                const includeArray = document.getElementById('include-array').value.split(',').map(d => parseInt(d, 10));
+                modifiedStrings = fileStrings.map(d => d.split('\t').filter((_, i) => includeArray.includes(i)).join('\t'));
             }
             return (modifiedStrings || fileStrings).map(d => {
                 let key;
